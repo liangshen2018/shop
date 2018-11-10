@@ -11,6 +11,8 @@
     <el-container>
       <el-aside width="200px">
          <el-menu 
+          router
+         :default-active="active"
          unique-opened 
          background-color="#545c64" 
          text-color="#fff"
@@ -20,7 +22,7 @@
                 <i class="el-icon-location"></i>
                 <span>用户管理</span>
               </template>
-              <el-menu-item index="1-1">
+              <el-menu-item index="users">
                 <i class="el-icon-menu"></i>
                 <span>用户列表</span>
               </el-menu-item>
@@ -79,13 +81,21 @@
             </el-submenu> 
          </el-menu>
       </el-aside>
-      <el-main>Main</el-main>
+      <el-main>
+        <slot></slot>
+      </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      // active: 'home'
+    }
+  },
+  props: ['active'],
   methods: {
     loginout() {
       this.$confirm('此操作将退出界面, 是否继续?', '温馨提示', {
