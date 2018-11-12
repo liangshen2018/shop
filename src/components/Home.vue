@@ -11,8 +11,7 @@
     <el-container>
       <el-aside width="200px">
          <el-menu 
-          router
-         :default-active="active"
+         router
          unique-opened 
          background-color="#545c64" 
          text-color="#fff"
@@ -82,7 +81,7 @@
          </el-menu>
       </el-aside>
       <el-main>
-        <slot></slot>
+        <router-view></router-view>
       </el-main>
     </el-container>
   </el-container>
@@ -90,12 +89,6 @@
 
 <script>
 export default {
-  data() {
-    return {
-      // active: 'home'
-    }
-  },
-  props: ['active'],
   methods: {
     loginout() {
       this.$confirm('此操作将退出界面, 是否继续?', '温馨提示', {
@@ -152,6 +145,9 @@ export default {
   }
   .el-aside {
     background-color: #545c64;
+    .el-submenu {
+      width: 200px;
+    }
   }
   .el-main {
     background-color: #eaeef1;
