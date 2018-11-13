@@ -3,10 +3,10 @@
   <el-form ref="form" :model="form" status-icon :rules="rules" label-width="80px" class="login_form">
   <img src="../assets/avatar.jpg" alt="">
   <el-form-item label="用户名" prop="username">
-    <el-input v-model="form.username" autocomplete="off"></el-input>
+    <el-input v-model="form.username"></el-input>
   </el-form-item>
   <el-form-item label="密码" prop="password">
-    <el-input type="password" v-model="form.password" autocomplete="off"></el-input>
+    <el-input type="password" v-model="form.password" @keyup.enter.native="submitForm('form')"></el-input>
   </el-form-item>
     <el-form-item>
     <el-button type="primary" @click="submitForm('form')">登入</el-button>
@@ -50,10 +50,9 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.axios.post('login', this.form).then(res => {
-            console.log(res.data)
-            if (res.data.meta.status === 200) {
+            if (res.meta.status === 200) {
               this.$message.success('登入成功')
-              localStorage.setItem('token', res.data.data.token)
+              localStorage.setItem('token', res.data.token)
               this.$router.push('/home')
             } else {
               this.$message.error('用户名或密码错误')

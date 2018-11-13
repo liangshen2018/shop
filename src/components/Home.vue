@@ -16,26 +16,26 @@
          background-color="#545c64" 
          text-color="#fff"
          active-text-color="#ffd04b">
-           <el-submenu index='1'>
+           <el-submenu v-for="level1 in menus" :key="level1.id" :index='level1.path'>
               <template slot="title">
                 <i class="el-icon-location"></i>
-                <span>用户管理</span>
+                <span>{{level1.authName}}</span>
               </template>
-              <el-menu-item index="users">
+              <el-menu-item v-for="level2 in level1.children" :key="level2.id" :index="level2.path">
                 <i class="el-icon-menu"></i>
-                <span>用户列表</span>
+                <span>{{level2.authName}}</span>
               </el-menu-item>
             </el-submenu> 
-            <el-submenu index='2'>
+            <!-- <el-submenu index='2'>
               <template slot="title">
                 <i class="el-icon-location"></i>
                 <span>权限管理</span>
               </template>
-              <el-menu-item index="2-1">
+              <el-menu-item index="roles">
                 <i class="el-icon-menu"></i>
                 <span>角色列表</span>
               </el-menu-item>
-              <el-menu-item index="2-2">
+              <el-menu-item index="rights">
                 <i class="el-icon-menu"></i>
                 <span>权限列表</span>
               </el-menu-item>
@@ -77,7 +77,7 @@
                 <i class="el-icon-menu"></i>
                 <span>数据报表</span>
               </el-menu-item>
-            </el-submenu> 
+            </el-submenu>  -->
          </el-menu>
       </el-aside>
       <el-main>
@@ -89,27 +89,37 @@
 
 <script>
 export default {
+  data() {
+    return {
+      menus: []
+    }
+  },
   methods: {
-    loginout() {
-      this.$confirm('此操作将退出界面, 是否继续?', '温馨提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          this.$message({
-            type: 'success',
-            message: '退出成功!'
-          })
-          localStorage.removeItem('token')
-          this.$router.push('/login')
+    async loginout() {
+      try {
+        await this.$confirm('此操作将退出界面, 是否继续?', '温馨提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
         })
-        .catch(() => {
-          this.$message({
-            type: 'success',
-            message: '已取消'
-          })
+
+        this.$message({
+          type: 'success',
+          message: '退出成功!'
         })
+        localStorage.removeItem('token')
+        this.$router.push('/login')
+      } catch (e) {
+        this.$message.info('已取消')
+      }
+    }
+  },
+  async created() {
+    let res = await this.axios.get('menus')
+    console.log(res)
+    let { meta: { status }, data } = res
+    if (status === 200) {
+      this.menus = data
     }
   }
 }

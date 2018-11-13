@@ -3,7 +3,7 @@
     <!-- 面包屑导航 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item to="/users">用户管理</el-breadcrumb-item>
+      <el-breadcrumb-item >用户管理</el-breadcrumb-item>
       <el-breadcrumb-item>用户列表</el-breadcrumb-item>
     </el-breadcrumb>
     <!-- 搜索框 -->
@@ -197,58 +197,53 @@ export default {
     },
     // 添加用户
     addUser() {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate(async valid => {
         if (valid) {
-          this.axios.post('users', this.form).then(res => {
-            let { meta: { status } } = res
-            if (status === 201) {
-              this.total++
-              this.currentPage = Math.ceil(this.total / this.pageSize)
-              this.getUsersList()
-              this.userVisible = false
-              this.$refs.form.resetFields()
-              this.$message.success('添加成功')
-            }
-          })
+          let res = await this.axios.post('users', this.form)
+          let { meta: { status } } = res
+          if (status === 201) {
+            this.total++
+            this.currentPage = Math.ceil(this.total / this.pageSize)
+            this.getUsersList()
+            this.userVisible = false
+            this.$refs.form.resetFields()
+            this.$message.success('添加成功')
+          }
         } else {
           return false
         }
       })
     },
     // 删除用户
-    delUser(id) {
-      this.$confirm('你确定要删除此用户', '警告', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          return this.axios.delete(`users/${id}`)
+    async delUser(id) {
+      try {
+        await this.$confirm('你确定要删除此用户', '警告', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
         })
-        .then(res => {
-          let { meta: { status } } = res
-          if (status === 200) {
-            console.log(this.list)
-            // ？this.list.length === 1
-            if (this.list.length === 1 && this.currentPage > 1) {
-              this.currentPage--
-            }
-            this.getUsersList()
-            this.$message.success('删除成功')
-          }
-        })
-        .catch(() => {
-          this.$message.info('取消删除')
-        })
-    },
-    // 修改状态
-    changeState(statu, id) {
-      this.axios.put(`users/${id}/state/${statu}`).then(res => {
+        let res = await this.axios.delete(`users/${id}`)
         let { meta: { status } } = res
         if (status === 200) {
-          this.$message.success('设置状态成功')
+          console.log(this.list)
+          // ？this.list.length === 1
+          if (this.list.length === 1 && this.currentPage > 1) {
+            this.currentPage--
+          }
+          this.getUsersList()
+          this.$message.success('删除成功')
         }
-      })
+      } catch (e) {
+        this.$message.info('取消删除')
+      }
+    },
+    // 修改状态
+    async changeState(statu, id) {
+      let res = await this.axios.put(`users/${id}/state/${statu}`)
+      let { meta: { status } } = res
+      if (status === 200) {
+        this.$message.success('设置状态成功')
+      }
     },
     // 编辑用户SHOW
     editShow(obj) {
@@ -260,16 +255,15 @@ export default {
     },
     // 确认编辑用户
     editUser() {
-      this.$refs.form2.validate(valid => {
+      this.$refs.form2.validate(async valid => {
         if (valid) {
-          this.axios.put(`users/${this.id}`, this.form2).then(res => {
-            if (res.meta.status === 200) {
-              this.editVisible = false
-              this.$message.success('更新成功')
-              this.getUsersList()
-              this.$refs.form2.resetFields()
-            }
-          })
+          let res = await this.axios.put(`users/${this.id}`, this.form2)
+          if (res.meta.status === 200) {
+            this.editVisible = false
+            this.$message.success('更新成功')
+            this.getUsersList()
+            this.$refs.form2.resetFields()
+          }
         } else {
           return false
         }
@@ -283,21 +277,20 @@ export default {
       this.id = ''
     },
     // 获取用户列表数据
-    getUsersList() {
-      this.axios({
+    async getUsersList() {
+      let res = await this.axios({
         url: 'users',
         params: {
           query: this.query,
           pagenum: this.currentPage,
           pagesize: this.pageSize
         }
-      }).then(res => {
-        let { meta: { status }, data: { users, total } } = res
-        if (status === 200) {
-          this.list = users
-          this.total = total
-        }
       })
+      let { meta: { status }, data: { users, total } } = res
+      if (status === 200) {
+        this.list = users
+        this.total = total
+      }
     },
     // 分页条数改变触发
     handleSizeChange(val) {
@@ -315,13 +308,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.el-breadcrumb {
-  height: 50px;
-  line-height: 50px;
-  background-color: #d4dae0;
-  padding-left: 10px;
-  font-size: 16px;
-}
 .el-input {
   width: 300px;
 }
