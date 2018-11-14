@@ -187,9 +187,8 @@ export default {
     // 显示添加角色框
     showAddRole() {
       this.roleVisible = true
-      this.$nextTick(() => {
-        this.$refs.addForm.resetFields()
-      })
+      this.addForm.roleName = ''
+      this.addForm.roleDesc = ''
     },
     // 添加角色
     addRole() {
@@ -218,6 +217,7 @@ export default {
         let { meta: { status } } = res
         if (status === 200) {
           this.roleEidtVisible = false
+          this.$refs.addForm.resetFields()
           this.getRolesList()
         }
       })

@@ -12,51 +12,6 @@
     </el-input>
     <!-- 点击出现对话框 -->
     <el-button type="success" plain style="margin-left:15px" @click="userVisible = true">添加用户</el-button>
-   <!-- 添加框 -->
-    <el-dialog
-      title="添加用户"
-      :visible.sync="userVisible">
-      <!-- 表单 -->
-      <el-form status-icon :model="form" :rules="rules" ref="form" label-width="100px">
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="form.username"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="form.password"></el-input>
-        </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="form.email"></el-input>
-        </el-form-item>
-        <el-form-item label="手机" prop="mobile">
-          <el-input v-model="form.mobile"></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="cancelAdd">取 消</el-button>
-        <el-button type="primary" @click = "addUser">确 定</el-button>
-      </span>
-    </el-dialog>
-   <!-- 编辑框 -->
-    <el-dialog
-      title="编辑用户"
-      :visible.sync="editVisible">
-      <!-- 表单 -->
-      <el-form status-icon :model="form2" :rules="rules" ref="form2" label-width="100px">
-        <el-form-item label="用户名">
-           <span>{{form2.username}}</span>
-        </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="form2.email"></el-input>
-        </el-form-item>
-        <el-form-item label="手机" prop="mobile">
-          <el-input v-model="form2.mobile"></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="cancalEidt">取 消</el-button>
-        <el-button type="primary" @click = "editUser">确 定</el-button>
-      </span>
-    </el-dialog>
     <!-- 表格渲染 -->
      <el-table
       :data="list"
@@ -93,7 +48,7 @@
         <template slot-scope="scope">
           <el-button type="primary" @click="editShow(scope.row)" icon="el-icon-edit" plain size="small"></el-button>
           <el-button type="danger"  @click="delUser(scope.row.id)" icon="el-icon-delete" plain size="small"></el-button>
-          <el-button type="success" icon="el-icon-check" plain size="small">分配角色</el-button>
+          <el-button type="success" @click="showAssignDialog(scope.row)" icon="el-icon-check" plain size="small">分配角色</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -108,6 +63,76 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
+    <!-- 添加框 -->
+    <el-dialog
+      title="添加用户"
+      :visible.sync="userVisible">
+      <!-- 表单 -->
+      <el-form status-icon :model="form" :rules="rules" ref="form" label-width="100px">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="form.username"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="form.password"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="form.email"></el-input>
+        </el-form-item>
+        <el-form-item label="手机" prop="mobile">
+          <el-input v-model="form.mobile"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelAdd">取 消</el-button>
+        <el-button type="primary" @click = "addUser">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 编辑框 -->
+    <el-dialog
+      title="编辑用户"
+      :visible.sync="editVisible">
+      <!-- 表单 -->
+      <el-form status-icon :model="form2" :rules="rules" ref="form2" label-width="100px">
+        <el-form-item label="用户名">
+           <span>{{form2.username}}</span>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="form2.email"></el-input>
+        </el-form-item>
+        <el-form-item label="手机" prop="mobile">
+          <el-input v-model="form2.mobile"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancalEidt">取 消</el-button>
+        <el-button type="primary" @click = "editUser">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 分配角色框 -->
+    <el-dialog
+      title="分配角色"
+      :visible.sync="assignVisible">
+      <!-- 表单 -->
+      <el-form status-icon :model="assignForm" :rules="rules" ref="assignForm" label-width="100px">
+        <el-form-item label="用户名">
+          <el-tag type="info">{{assignForm.username}}</el-tag>
+        </el-form-item>
+        <el-form-item label="角色列表" prop="rid">
+          <el-select v-model="assignForm.rid" placeholder="请选择">
+            <el-option
+              v-for="item in rolesList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="assignVisible = false">取 消</el-button>
+        <el-button type="primary" @click="assignRole">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -137,6 +162,7 @@ export default {
       }
     }
     return {
+      rolesList: [],
       query: '',
       currentPage: 1,
       pageSize: 2,
@@ -144,6 +170,7 @@ export default {
       list: [],
       userVisible: false,
       editVisible: false,
+      assignVisible: false,
       form2: {
         username: '',
         id: '',
@@ -176,7 +203,13 @@ export default {
           }
         ],
         email: [{ validator: validateEmail, trigger: 'blur' }],
-        mobile: [{ validator: validateMobile, trigger: 'blur' }]
+        mobile: [{ validator: validateMobile, trigger: 'blur' }],
+        rid: [{ required: true, message: '请选择角色', trigger: 'blur' }]
+      },
+      assignForm: {
+        id: '',
+        username: '',
+        rid: ''
       }
     }
   },
@@ -302,6 +335,40 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val
       this.getUsersList()
+    },
+    // 显示分配角色对话框
+    async showAssignDialog({ id }) {
+      this.assignForm.id = id
+      this.getRolesList()
+      this.assignVisible = true
+      let res = await this.axios.get(`users/${id}`)
+      let { meta: { status }, data: { rid, username } } = res
+      if (status === 200) {
+        rid = rid === -1 ? '' : rid
+        this.assignForm.rid = rid
+        this.assignForm.username = username
+      }
+    },
+    assignRole() {
+      this.$refs.assignForm.validate(async valid => {
+        if (!valid) return false
+        let res = await this.axios.put(`users/${this.assignForm.id}/role`, {
+          rid: this.assignForm.rid
+        })
+        if (res.meta.status === 200) {
+          this.assignVisible = false
+          this.$message.success('分配成功')
+          this.$refs.assignForm.resetFields()
+        }
+      })
+    },
+    // 获取所有角色列表
+    async getRolesList() {
+      let res = await this.axios.get('roles')
+      let { meta: { status }, data } = res
+      if (status === 200) {
+        this.rolesList = data
+      }
     }
   }
 }

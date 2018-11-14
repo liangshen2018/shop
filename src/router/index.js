@@ -2,9 +2,14 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
 import Home from '@/components/Home'
-import Users from '@/components/Users'
-import Rights from '@/components/Rights'
-import Roles from '@/components/Roles'
+import Users from '@/components/users/Users'
+import Rights from '@/components/rights/Rights'
+import Roles from '@/components/rights/Roles'
+import Categories from '@/components/categories/Categories.vue'
+import Goods from '@/components/categories/Goods'
+import Params from '@/components/categories/Params'
+import Orders from '@/components/orders/Orders'
+import Reports from '@/components/reports/Reports'
 Vue.use(Router)
 
 const router = new Router({
@@ -23,7 +28,12 @@ const router = new Router({
       children: [
         { path: '/users', component: Users },
         { path: '/rights', component: Rights },
-        { path: '/roles', component: Roles }
+        { path: '/roles', component: Roles },
+        { path: '/categories', component: Categories },
+        { path: '/goods', component: Goods },
+        { path: '/params', component: Params },
+        { path: '/orders', component: Orders },
+        { path: '/reports', component: Reports }
       ]
     }
   ]

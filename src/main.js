@@ -5,6 +5,8 @@ import App from './App'
 import router from './router'
 import '@/assets/common.css'
 import axios from 'axios'
+import ElTreeGrid from 'element-tree-grid'
+Vue.component(ElTreeGrid.name, ElTreeGrid)
 axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/'
 Vue.prototype.axios = axios
 // 添加请求拦截器
