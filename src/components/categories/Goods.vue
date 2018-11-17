@@ -1,6 +1,6 @@
 <template>
   <div class="goods">
-    <el-button type="success">添加商品</el-button>
+    <el-button type="success" @click="$router.push('/goods-add')">添加商品</el-button>
     <el-table v-loading="loading" :data="goodsList" width="100%">
       <el-table-column
       label="商品名称" 
@@ -12,7 +12,7 @@
       </el-table-column>
       <el-table-column label="创建时间" prop="upd_time">
         <template slot-scope="scope">
-          {{new Date(scope.row.upd_time).toLocaleDateString()}}
+          {{new Date(scope.row.upd_time*1000).toLocaleDateString()}}
         </template>
       </el-table-column>
       <el-table-column label="操作">

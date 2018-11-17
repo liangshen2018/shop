@@ -6,6 +6,12 @@ import router from './router'
 import '@/assets/common.css'
 import axios from 'axios'
 import ElTreeGrid from 'element-tree-grid'
+// quill富文本
+import VueQuillEditor from 'vue-quill-editor'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+Vue.use(VueQuillEditor)
 Vue.component(ElTreeGrid.name, ElTreeGrid)
 axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/'
 Vue.prototype.axios = axios
